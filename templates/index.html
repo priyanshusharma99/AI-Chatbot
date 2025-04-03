@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbot</title>
+    <style>
+        h1 {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #user-input {
+            width: 400px;
+            height: 40px;
+            font-size: 16px;
+            padding: 10px;
+            background-color: #74a3ed;
+            border: none;
+            border-radius: 20px;
+            padding-left: 10px;
+        }
+
+        button {
+            width: 70px;
+            height: 40px;
+            border: none;
+            border-radius: 20px;
+            margin: 10px;
+            cursor: pointer;
+        }
+
+        #chat-response {
+            margin-top: 20px;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        /* Loading animation */
+        #loading {
+            display: none;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .dots::after {
+            content: "";
+            display: inline-block;
+            animation: dots-animation 1.5s steps(4, end) infinite;
+        }
+
+        @keyframes dots-animation {
+            0% { content: "."; }
+            25% { content: ".."; }
+            50% { content: "..."; }
+            75% { content: "...."; }
+            100% { content: "."; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to Priyanshu's AI Chatbot</h1>
+
+    <form id="chat-form">
+        <input type="text" id="user-input" placeholder="Type a message..." required>
+        <button type="submit">Send</button>
+    </form>
+
+    <div id="loading">Thinking<span class="dots"></span></div>
+    <div id="chat-response"></div>
+
+    <script>
+        document.getElementById("chat-form").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            let userMessage = document.getElementById("user-input").value;
+            let chatResponse = document.getElementById("chat-response");
+            let loadingIndicator = document.getElementById("loading");
+
+            // Clear previous response and show loading animation
+            chatResponse.innerText = "";
+            loadingIndicator.style.display = "block";
+
+            // Send message to backend
+            let response = await fetch("/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: userMessage })
+            });
+
+            let data = await response.json();
+
+            // Hide loading animation and show response
+            loadingIndicator.style.display = "none";
+            chatResponse.innerText = data.response;
+        });
+    </script>
+</body>
+</html>
